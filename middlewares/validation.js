@@ -13,11 +13,7 @@ const validateCreateUser = celebrate({
       'any.required': 'Поле "email" должно быть заполнено',
     }),
     password: Joi.string().required(),
-    name: Joi.string().min(2).max(30)
-      .message({
-        'string.min': 'Минимальная длина поля "name" - 2',
-        'string.max': 'Максимальная длина поля "name" - 30',
-      }),
+    name: Joi.string().min(2).max(30).required(),
   }),
 });
 
@@ -37,7 +33,7 @@ const validateLogin = celebrate({
 
 const validateUpdateProfile = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().custom((value, helpers) => {
+    email: Joi.string().custom((value, helpers) => {
       if (validator.isEmail(value)) {
         return value;
       }
@@ -45,7 +41,7 @@ const validateUpdateProfile = celebrate({
     }).message({
       'any.required': 'Поле "email" должно быть заполнено',
     }),
-    name: Joi.string().min(2).max(30).required(),
+    name: Joi.string().min(2).max(30),
   }),
 });
 
@@ -97,16 +93,7 @@ const validateCreateMovie = celebrate({
     }).message({
       'any.required': 'Поле "thumbnail" должно быть заполнено',
     }),
-    movieId: Joi.string().required().alphanum().length(24)
-      .custom((value, helpers) => {
-        if (ObjectId.isValid(value)) {
-          return value;
-        }
-        return helpers.message('Невалидный id');
-      })
-      .message({
-        'string.length': 'Длина поля - 24',
-      }),
+    movieId: Joi.number().required(),
   }),
 });
 

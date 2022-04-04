@@ -4,22 +4,37 @@ const { user } = require('../models/user');
 const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/bad-request-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const NotFoundError = require('../errors/not-found-error');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 exports.getUser = (req, res, next) => {
-  user.find({})
-    .then((users) => res.status(200).send(users))
-    .catch(next);
+  user.findOne({ _id: req.user._id })
+    .then((users) => {
+      if (users) {
+        res.status(200).send({
+          name: users.name, email: users.email, _id: users._id,
+        });
+      } next(new NotFoundError('Нет пользователя с таким id!'));
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при поиске пользователя!'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 exports.updateProfile = (req, res, next) => {
   const { name, email } = req.body;
-  user.findOneAndUpdate({ }, { name, email }, { new: true, runValidators: true })
+  user.findOneAndUpdate({ _id: req.user._id }, { name, email }, { new: true, runValidators: true })
     .then((users) => res.status(200).send({ users }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении пользователя!'));
+      } else if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует!'));
       } else {
         next(err);
       }
@@ -60,6 +75,6 @@ exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch(() => {
-      next(new UnauthorizedError('Токен некорректен!'));
+      next(new UnauthorizedError('Неправильные почта или пароль!'));
     });
 };
