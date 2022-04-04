@@ -11,7 +11,7 @@ const { errorHandler } = require('./middlewares/errorHandler');
 const NotFoundError = require('./errors/not-found-error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, DB_DATABASE } = process.env;
+const { PORT = 3000, DB_DATABASE, NODE_ENV } = process.env;
 
 const app = express();
 
@@ -39,7 +39,7 @@ app.use(errors());
 app.use(errorHandler);
 
 async function main() {
-  await mongoose.connect(DB_DATABASE, {
+  await mongoose.connect(NODE_ENV === 'production' ? DB_DATABASE : 'mongodb://localhost:27017/bitfilmsdb', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
