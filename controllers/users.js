@@ -29,7 +29,7 @@ exports.getUser = (req, res, next) => {
 exports.updateProfile = (req, res, next) => {
   const { name, email } = req.body;
   user.findOneAndUpdate({ _id: req.user._id }, { name, email }, { new: true, runValidators: true })
-    .then((users) => res.status(200).send({ users }))
+    .then((users) => res.status(200).send({ _id: users._id, email: users.email, name: users.name }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении пользователя!'));

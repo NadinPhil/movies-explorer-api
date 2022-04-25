@@ -4,7 +4,7 @@ const validator = require('validator');
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
-    required: true,
+    required: false,
   },
   director: {
     type: String,
@@ -23,7 +23,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: String,
+    type: String || null,
     required: true,
     validate: {
       validator: (value) => validator.isURL(value),
@@ -44,11 +44,10 @@ const movieSchema = new mongoose.Schema({
   },
   nameEN: {
     type: String,
-    required: true,
+    required: false,
   },
   thumbnail: {
     type: String,
-    required: true,
     validate: {
       validator: (value) => validator.isURL(value),
       message: 'Невалидный URL!',
@@ -59,8 +58,12 @@ const movieSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  movieId: {
+  id: {
     type: Number,
+    required: true,
+  },
+  liked: {
+    type: Boolean,
     required: true,
   },
 });

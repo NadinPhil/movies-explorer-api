@@ -1,6 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
-const { ObjectId } = require('mongoose').Types;
 
 const validateCreateUser = celebrate({
   body: Joi.object().keys({
@@ -47,27 +46,18 @@ const validateUpdateProfile = celebrate({
 
 const validateDeleteMovie = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().required().alphanum().length(24)
-      .custom((value, helpers) => {
-        if (ObjectId.isValid(value)) {
-          return value;
-        }
-        return helpers.message('Невалидный id');
-      })
-      .message({
-        'string.length': 'Длина поля - 24',
-      }),
+    _id: Joi.string().required(),
   }),
 });
 
 const validateCreateMovie = celebrate({
   body: Joi.object().keys({
-    country: Joi.string().required(),
+    country: Joi.required(),
     director: Joi.string().required(),
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().custom((value, helpers) => {
+    image: Joi.required().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
@@ -85,7 +75,7 @@ const validateCreateMovie = celebrate({
     }),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required().custom((value, helpers) => {
+    thumbnail: Joi.string().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
@@ -93,7 +83,8 @@ const validateCreateMovie = celebrate({
     }).message({
       'any.required': 'Поле "thumbnail" должно быть заполнено',
     }),
-    movieId: Joi.number().required(),
+    id: Joi.number().required(),
+    liked: Joi.boolean().required(),
   }),
 });
 

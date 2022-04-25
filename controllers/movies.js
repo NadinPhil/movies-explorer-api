@@ -40,9 +40,11 @@ exports.createMovie = (req, res, next) => {
     nameRU,
     nameEN,
     thumbnail,
-    movieId,
+    id,
+    liked,
   } = req.body;
   const ownerId = req.user._id;
+  const moviesId = req.params._id;
   movie.create({
     country,
     director,
@@ -55,7 +57,9 @@ exports.createMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     owner: ownerId,
-    movieId,
+    id,
+    _id: moviesId,
+    liked,
   })
     .then((movies) => {
       res.send({
@@ -70,7 +74,9 @@ exports.createMovie = (req, res, next) => {
         nameEN: movies.nameEN,
         thumbnail: movies.thumbnail,
         owner: movies.owner,
-        movieId: movies.movieId,
+        id: movies.id,
+        _id: movies._id,
+        liked: movies.liked,
       });
     })
     .catch((err) => {
