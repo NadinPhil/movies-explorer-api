@@ -52,7 +52,7 @@ const validateDeleteMovie = celebrate({
 
 const validateCreateMovie = celebrate({
   body: Joi.object().keys({
-    country: Joi.required(),
+    country: Joi.string().allow(null).allow('').required(),
     director: Joi.string().required(),
     duration: Joi.number().required(),
     year: Joi.string().required(),
@@ -74,14 +74,12 @@ const validateCreateMovie = celebrate({
       'any.required': 'Поле "trailerLink" должно быть заполнено',
     }),
     nameRU: Joi.string().required(),
-    nameEN: Joi.string().required(),
-    thumbnail: Joi.string().custom((value, helpers) => {
+    nameEN: Joi.string().required().allow(null).allow(''),
+    thumbnail: Joi.string().allow(null).allow('').custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
       return helpers.message('Невалидный URL!');
-    }).message({
-      'any.required': 'Поле "thumbnail" должно быть заполнено',
     }),
     id: Joi.number().required(),
     liked: Joi.boolean().required(),

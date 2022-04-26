@@ -48,6 +48,7 @@ const movieSchema = new mongoose.Schema({
   },
   thumbnail: {
     type: String,
+    required: false,
     validate: {
       validator: (value) => validator.isURL(value),
       message: 'Невалидный URL!',
